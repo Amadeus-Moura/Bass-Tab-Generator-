@@ -1,0 +1,59 @@
+/* Player layout */
+.playerRoot {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Top bar */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+
+.topLeft { display: flex; align-items: center; gap: 0.75rem; }
+.topCenter { flex: 1; display: flex; justify-content: center; }
+.topRight { display: flex; align-items: center; }
+
+.appLogo { font-size: 1.8rem; line-height: 1; }
+
+.appName {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a78bfa, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.appSub { margin: 0; font-size: 0.65rem; color: var(--text-muted); }
+
+.resetBtn {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.78rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+.resetBtn:hover {
+  background: rgba(167,139,250,0.15);
+  border-color: rgba(167,139,250,0.4);
+  color: #a78bfa;
+}
+
+/* Tab area fills remaining space */
+.tabArea {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  padding: 0.75rem;
+}

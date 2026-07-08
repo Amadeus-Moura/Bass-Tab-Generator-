@@ -1,0 +1,116 @@
+/* Fontes carregadas de forma não-bloqueante via index.html.
+   Inter e JetBrains Mono chegam depois; sistema usa os fallbacks abaixo até lá. */
+
+/* ─────────────────────────────────────────
+   Design tokens
+───────────────────────────────────────── */
+:root {
+  --bg-base:       #0d0d14;
+  --bg-surface:    #13131f;
+  --bg-elevated:   #1a1a2e;
+
+  --text-primary:  #f0f0ff;
+  --text-secondary:#a0a0c0;
+  --text-muted:    #50506a;
+
+  --accent-violet: #a78bfa;
+  --accent-sky:    #38bdf8;
+  --accent-rose:   #f472b6;
+
+  --radius-sm:  6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* ─────────────────────────────────────────
+   Reset
+───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Subtle animated gradient background */
+  background-image:
+    radial-gradient(ellipse at 15% 20%, rgba(167,139,250,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 80%, rgba(56,189,248,0.06) 0%, transparent 50%);
+}
+
+/* ─────────────────────────────────────────
+   Typography utilities
+───────────────────────────────────────── */
+code, pre, .mono {
+  font-family: var(--font-mono);
+}
+
+/* ─────────────────────────────────────────
+   Scrollbar (global)
+───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ─────────────────────────────────────────
+   Focus styles
+───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-violet);
+  outline-offset: 2px;
+}
+
+button {
+  font-family: var(--font-sans);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ─────────────────────────────────────────
+   Micro-animation: fade-in-up
+───────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.3s ease forwards;
+}

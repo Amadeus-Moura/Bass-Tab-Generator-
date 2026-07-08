@@ -1,0 +1,61 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.so
+
+# ── Node.js ───────────────────────────────────────────────────────────────────
+node_modules/
+web/node_modules/
+
+# ── Build output ──────────────────────────────────────────────────────────────
+dist/
+web/dist/
+*.js.map
+
+# ── Environment (NUNCA commitar segredos!) ────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Uploads & arquivos processados ───────────────────────────────────────────
+uploads/
+# Arquivos gerados pelo pipeline ML (temporários)
+test.mid
+tab.json
+# Áudios de teste locais
+*.mp3
+*.wav
+*.flac
+*.ogg
+*.m4a
+
+# ── Drizzle migrations meta (gerado automaticamente) ─────────────────────────
+# Mantenha o SQL mas ignore o meta interno do drizzle-kit
+# src/infrastructure/database/migrations/meta/  ← manter no repo
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── OS / Editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+
+# ── Demucs cache de modelos ───────────────────────────────────────────────────
+# Os modelos são baixados automaticamente no primeiro uso
+~/.cache/torch/
+~/.cache/demucs/
+separated/

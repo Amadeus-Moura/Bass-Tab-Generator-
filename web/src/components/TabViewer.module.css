@@ -1,0 +1,172 @@
+.viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  flex: 1;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sublabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Fretboard / piano-roll view */
+.fretboard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  min-height: 180px;
+}
+
+.stringRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 36px;
+}
+
+.stringLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.stringLine {
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+
+.line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px solid;
+  transform: translateY(-50%);
+}
+
+/* Note block (piano roll cell) */
+.noteBlock {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 28px;
+  min-width: 28px;
+  background: color-mix(in srgb, var(--str-color, #a78bfa) 20%, transparent);
+  border: 1px solid var(--str-color, #a78bfa);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: background 0.15s, box-shadow 0.15s;
+  overflow: hidden;
+  padding: 0 3px;
+}
+
+.noteBlock:hover {
+  background: color-mix(in srgb, var(--str-color, #a78bfa) 40%, transparent);
+  box-shadow: 0 0 8px var(--str-color, #a78bfa);
+  z-index: 10;
+}
+
+.fretNum {
+  font-size: 0.7rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  color: var(--str-color, #a78bfa);
+  line-height: 1;
+}
+
+.noteLabel {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1;
+}
+
+/* Rest markers — full height vertical shading */
+.restMarker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.03) 3px,
+    rgba(255, 255, 255, 0.03) 6px
+  );
+  border-left: 1px dashed rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+/* ASCII Tab strip */
+.asciiTab {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.85rem;
+  overflow-x: auto;
+}
+
+.asciiLine {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.asciiStringLabel {
+  font-weight: 700;
+  min-width: 1.2ch;
+}
+
+.asciiPipe {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.asciiFrets {
+  display: flex;
+  gap: 0;
+}
+
+.asciiCell {
+  color: var(--text-primary);
+  padding: 0 2px;
+}
+
+.asciiEmpty {
+  color: var(--text-muted);
+}

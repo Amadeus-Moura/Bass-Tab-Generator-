@@ -1,0 +1,51 @@
+{
+  "name": "bass-tablature-core",
+  "version": "0.1.0",
+  "description": "Core Domain — bass guitar tablature generator (Clean Architecture + TDD)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build":         "tsc",
+    "start":         "tsx src/index.ts",
+    "server":        "tsx server/server.ts",
+    "test":          "jest --config jest.config.json",
+    "test:watch":    "jest --config jest.config.json --watch",
+    "test:coverage": "jest --config jest.config.json --coverage",
+    "web":           "cd web && npm run dev",
+    "db:generate":   "drizzle-kit generate",
+    "db:migrate":    "drizzle-kit migrate",
+    "db:push":       "drizzle-kit push",
+    "db:studio":     "drizzle-kit studio",
+    "db:seed":       "tsx src/infrastructure/database/seed.ts"
+  },
+  "keywords": [
+    "bass",
+    "guitar",
+    "tablature",
+    "music",
+    "tdd"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^26.0.1",
+    "drizzle-kit": "^0.31.10",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@tonejs/midi": "^2.0.28",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "postgres": "^3.4.9"
+  }
+}

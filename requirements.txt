@@ -1,0 +1,26 @@
+# =============================================================================
+# Bass Extractor — Python ML Pipeline
+# =============================================================================
+#
+# BEFORE installing this file, install PyTorch with CUDA support:
+#
+#   Linux (CUDA 12.1 — recommended for Bazzite/modern NVIDIA GPUs):
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
+#
+#   CPU only (fallback, no CUDA):
+#   pip install torch torchaudio
+#
+# System dependency (must be installed via the OS package manager):
+#   Bazzite / Fedora:  sudo dnf install ffmpeg
+#   Ubuntu / Debian:   sudo apt install ffmpeg
+#
+# After installing PyTorch + ffmpeg, install the rest:
+#   pip install -r requirements.txt
+# =============================================================================
+
+# Source separation — Meta's Hybrid Transformer Demucs
+demucs>=4.0.0
+
+# Audio-to-MIDI transcription — Spotify's Basic Pitch
+# Uses TensorFlow under the hood (installed automatically as a dependency)
+basic-pitch>=0.3.0

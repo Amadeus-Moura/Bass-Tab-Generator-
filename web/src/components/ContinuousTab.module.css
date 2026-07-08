@@ -1,0 +1,160 @@
+.wrapper {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Fixed string labels ─────────────────────────────────────────────────── */
+.labels {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 40px;
+  background: rgba(0, 0, 0, 0.35);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  z-index: 2;
+}
+
+.stringLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ── Scrollable timeline ─────────────────────────────────────────────────── */
+.scrollContainer {
+  flex: 1;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  /* scroll-behavior: auto — do NOT set smooth; we drive scrollLeft directly */
+  cursor: crosshair;
+  user-select: none;
+}
+
+.scrollContainer::-webkit-scrollbar { height: 5px; }
+.scrollContainer::-webkit-scrollbar-track { background: transparent; }
+.scrollContainer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 3px;
+}
+
+/* ── Inner timeline (all children absolutely positioned) ─────────────────── */
+.inner {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ── Horizontal string lines ─────────────────────────────────────────────── */
+.stringLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px solid;
+  pointer-events: none;
+}
+
+/* ── Measure markers ─────────────────────────────────────────────────────── */
+.measureMarker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.055);
+  pointer-events: none;
+}
+
+.measureNum {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.18);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* ── Note blocks ─────────────────────────────────────────────────────────── */
+.note {
+  position: absolute;
+  border: 1px solid;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* No CSS transition on the hot-path properties — rAF handles class toggling */
+  will-change: box-shadow, background;
+}
+
+/*
+ * .noteActive is toggled by the rAF loop via classList.add/remove —
+ * NOT via React setState. This keeps 60fps smooth with 700+ notes.
+ */
+.noteActive {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: var(--nc, #a78bfa) !important;
+  box-shadow: 0 0 16px var(--nc, #a78bfa), 0 0 5px var(--nc, #a78bfa);
+  transform: scaleY(1.1);
+  z-index: 10;
+}
+
+.noteLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+/* ── Playhead ────────────────────────────────────────────────────────────── */
+/*
+ * left: 0 is the origin. rAF loop does:
+ *   playheadRef.current.style.transform = `translateX(${t * PX_PER_SECOND}px)`
+ * GPU-composited → zero layout reflow at 60fps.
+ */
+.playhead {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(to bottom,
+    #ffffff 0%,
+    #38bdf8 20%,
+    rgba(56, 189, 248, 0.4) 70%,
+    transparent 100%);
+  box-shadow:
+    0 0 8px  rgba(255, 255, 255, 0.9),
+    0 0 20px rgba(56, 189, 248, 0.8),
+    0 0 40px rgba(56, 189, 248, 0.4);
+  pointer-events: none;
+  z-index: 30;
+  will-change: transform;
+  transform: translateX(0px); /* explicit initial value */
+}
+/* Arrow head at top of playhead */
+.playhead::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -5px;
+  width: 0; height: 0;
+  border-left:  6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top:   10px solid #ffffff;
+  filter: drop-shadow(0 0 4px #38bdf8);
+}
