@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { TabJson } from './types/TabJson';
-import { HomeScreen }    from './components/HomeScreen';
+import { LandingPage }  from './components/LandingPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ContinuousTab } from './components/ContinuousTab';
 import { AudioControls } from './components/AudioControls';
@@ -9,57 +9,52 @@ import styles from './App.module.css';
 
 // ── State machine ─────────────────────────────────────────────────────────────
 type Phase =
-  | { name: 'home' }
+  | { name: 'landing' }
   | { name: 'loading'; jobId: string; audioUrl: string }
-  | { name: 'player'; tabJson: TabJson; audioUrl: string; title: string };
+  | { name: 'player';  tabJson: TabJson; audioUrl: string; title: string };
 
 export default function App() {
-  const [phase,       setPhase]       = useState<Phase>({ name: 'home' });
+  const [phase,       setPhase]       = useState<Phase>({ name: 'landing' });
   const [displayMode, setDisplayMode] = useState<'frets' | 'notes'>('frets');
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Called by UploadScreen after file is uploaded — start processing
+  // Upload concluído → inicia pipeline SSE
   const handleUploaded = useCallback((jobId: string, audioUrl: string) => {
     setPhase({ name: 'loading', jobId, audioUrl });
   }, []);
 
-  // Called by LoadingScreen SSE when pipeline finishes (returns raw tabJson)
+  // Pipeline SSE finalizado → abre player
   const handleDone = useCallback((payload: unknown) => {
     setPhase((prev) => {
-      // From LoadingScreen: payload is the tabJson directly
-      if (prev.name === 'loading') {
-        const title = decodeURIComponent(prev.audioUrl.split('/').pop() ?? 'Bassline');
-        return { name: 'player', tabJson: payload as TabJson, audioUrl: prev.audioUrl, title };
-      }
-      return prev;
+      if (prev.name !== 'loading') return prev;
+      const title = decodeURIComponent(prev.audioUrl.split('/').pop() ?? 'Bassline');
+      return { name: 'player', tabJson: payload as TabJson, audioUrl: prev.audioUrl, title };
     });
   }, []);
 
-  // Called by LibraryScreen: payload is { tabJson, audioUrl, title }
-  const handleLibraryLoad = useCallback((payload: unknown) => {
-    const { tabJson, audioUrl, title } = payload as { tabJson: TabJson; audioUrl: string; title: string };
-    setPhase({ name: 'player', tabJson, audioUrl, title });
-  }, []);
+  // Música carregada da biblioteca → abre player diretamente
+  const handleLoadSong = useCallback(
+    (tabJson: TabJson, audioUrl: string, title: string) => {
+      setPhase({ name: 'player', tabJson, audioUrl, title });
+    },
+    [],
+  );
 
   const handleError = useCallback((msg: string) => {
-    alert(`Erro: ${msg}`);
-    setPhase({ name: 'home' });
+    alert(`Erro no processamento:\n${msg}`);
+    setPhase({ name: 'landing' });
   }, []);
 
   const seek = useCallback((t: number) => {
     if (audioRef.current) audioRef.current.currentTime = t;
   }, []);
 
-  // ── Render ────────────────────────────────────────────────────────────────────
-  if (phase.name === 'home') {
-    return (
-      <HomeScreen
-        onUploaded={handleUploaded}
-        onPlayerReady={handleLibraryLoad}
-      />
-    );
+  // ── Landing ───────────────────────────────────────────────────────────────────
+  if (phase.name === 'landing') {
+    return <LandingPage onUploaded={handleUploaded} onLoadSong={handleLoadSong} />;
   }
 
+  // ── Loading ───────────────────────────────────────────────────────────────────
   if (phase.name === 'loading') {
     return (
       <LoadingScreen
@@ -88,12 +83,17 @@ export default function App() {
             </p>
           </div>
         </div>
+
         <div className={styles.topCenter}>
           <ModeToggle mode={displayMode} onChange={setDisplayMode} />
         </div>
+
         <div className={styles.topRight}>
-          <button className={styles.resetBtn} onClick={() => setPhase({ name: 'home' })}>
-            ↩ Biblioteca
+          <button
+            className={styles.resetBtn}
+            onClick={() => setPhase({ name: 'landing' })}
+          >
+            ← Início
           </button>
         </div>
       </header>
