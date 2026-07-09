@@ -156,6 +156,17 @@ app.get('/api/process/:jobId', async (req, res) => {
 });
 
 // ────────────────────────────────────────────────────────────────────────────
+// PATCH /api/songs/:songId — rename a song
+// ────────────────────────────────────────────────────────────────────────────
+app.patch('/api/songs/:songId', async (req, res) => {
+  const { songId } = req.params;
+  const { title }  = req.body as { title?: string };
+  if (!title?.trim()) { res.status(400).json({ error: 'Título inválido.' }); return; }
+  await db.update(songs).set({ title: title.trim() }).where(eq(songs.id, songId));
+  res.json({ songId, title: title.trim() });
+});
+
+// ────────────────────────────────────────────────────────────────────────────
 // GET /api/library — returns all saved songs with latest tablature metadata
 // ────────────────────────────────────────────────────────────────────────────
 app.get('/api/library', async (_req, res) => {

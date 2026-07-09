@@ -1,0 +1,30 @@
+.root { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* Loading / error */
+.center { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; height: 100vh; }
+.spinner { width: 40px; height: 40px; border: 3px solid rgba(167,139,250,0.2); border-top-color: #a78bfa; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.errorText { color: #fca5a5; font-size: 0.9rem; }
+.backBtn { padding: 0.55rem 1.25rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; color: var(--text-secondary); font-size: 0.82rem; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+.backBtn:hover { background: rgba(255,255,255,0.12); }
+
+/* Top bar */
+.topBar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.65rem 1.25rem; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); flex-shrink: 0; }
+.topLeft { display: flex; align-items: center; gap: 0.85rem; min-width: 0; flex: 1; }
+.topCenter { display: flex; justify-content: center; }
+.topRight { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+
+/* Back button (link) */
+.topLeft > a.backBtn { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: var(--text-secondary); text-decoration: none; font-size: 1rem; flex-shrink: 0; transition: background 0.15s; }
+.topLeft > a.backBtn:hover { background: rgba(255,255,255,0.14); color: var(--text-primary); }
+
+.songTitle { margin: 0; font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; background: linear-gradient(135deg, #a78bfa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.songMeta { margin: 0; font-size: 0.62rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+.navLink { font-size: 0.78rem; color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+.navLink:hover { color: var(--text-primary); }
+.navCta { font-size: 0.78rem; font-weight: 600; padding: 0.38rem 0.85rem; background: linear-gradient(135deg, #a78bfa, #38bdf8); color: #fff; border-radius: 7px; text-decoration: none; box-shadow: 0 0 12px rgba(167,139,250,0.3); transition: opacity 0.15s; }
+.navCta:hover { opacity: 0.85; }
+
+/* Tab area fills remaining height */
+.tabArea { flex: 1; display: flex; overflow: hidden; padding: 0.75rem; }
