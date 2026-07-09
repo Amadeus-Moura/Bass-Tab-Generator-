@@ -1,131 +1,223 @@
+/* ── Wrapper ─────────────────────────────────────────────────────────────── */
 .wrapper {
   display: flex;
-  align-items: stretch;
   flex: 1;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.25);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.07);
+  position: relative;
 }
 
-/* ── Fixed string labels ─────────────────────────────────────────────────── */
-.labels {
+/* ── Fixed string labels column ─────────────────────────────────────────── */
+.labelsCol {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  width: 52px;
   flex-shrink: 0;
-  width: 40px;
-  background: rgba(0, 0, 0, 0.35);
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
-  z-index: 2;
+  background: rgba(0, 0, 0, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 10;
+}
+
+.rulerSpacer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.rulerUnit {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.2);
+  font-family: var(--font-mono);
 }
 
 .stringLabel {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 800;
+  gap: 2px;
   flex-shrink: 0;
 }
 
-/* ── Scrollable timeline ─────────────────────────────────────────────────── */
+.stringName {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stringNum {
+  font-size: 0.55rem;
+  opacity: 0.45;
+  font-family: var(--font-mono);
+}
+
+/* ── Scrollable container ────────────────────────────────────────────────── */
 .scrollContainer {
   flex: 1;
   overflow-x: scroll;
   overflow-y: hidden;
-  /* scroll-behavior: auto — do NOT set smooth; we drive scrollLeft directly */
-  cursor: crosshair;
-  user-select: none;
+  /* Hide scrollbar visually but keep functional */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
+.scrollContainer::-webkit-scrollbar        { height: 4px; }
+.scrollContainer::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.12); border-radius: 2px; }
 
-.scrollContainer::-webkit-scrollbar { height: 5px; }
-.scrollContainer::-webkit-scrollbar-track { background: transparent; }
-.scrollContainer::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
-  border-radius: 3px;
-}
-
-/* ── Inner timeline (all children absolutely positioned) ─────────────────── */
+/* ── Inner canvas (full timeline width × height) ─────────────────────────── */
 .inner {
   position: relative;
-  flex-shrink: 0;
+  cursor: crosshair;
 }
 
-/* ── Horizontal string lines ─────────────────────────────────────────────── */
+/* ── Time ruler ──────────────────────────────────────────────────────────── */
+.ruler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  z-index: 5;
+  overflow: visible;
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tickMajor {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.tickLabel {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ── String guide lines ──────────────────────────────────────────────────── */
 .stringLine {
   position: absolute;
   left: 0;
   right: 0;
-  height: 1px;
-  border-top: 1px solid;
+  height: 0;
+  border-top: 1.5px solid;
   pointer-events: none;
 }
 
 /* ── Measure markers ─────────────────────────────────────────────────────── */
 .measureMarker {
   position: absolute;
-  top: 0;
-  bottom: 0;
   width: 1px;
-  background: rgba(255, 255, 255, 0.055);
+  background: rgba(255, 255, 255, 0.06);
   pointer-events: none;
+  z-index: 2;
 }
 
 .measureNum {
   position: absolute;
-  top: 3px;
-  left: 3px;
-  font-size: 0.58rem;
-  color: rgba(255, 255, 255, 0.18);
+  top: 4px;
+  left: 4px;
+  font-size: 0.55rem;
   font-family: var(--font-mono);
-  white-space: nowrap;
-  pointer-events: none;
-  line-height: 1;
+  color: rgba(255, 255, 255, 0.25);
+  user-select: none;
 }
 
 /* ── Note blocks ─────────────────────────────────────────────────────────── */
 .note {
   position: absolute;
-  border: 1px solid;
-  border-radius: 5px;
+  border: 1.5px solid;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* No CSS transition on the hot-path properties — rAF handles class toggling */
   will-change: box-shadow, background;
+  cursor: pointer;
+  transition: border-color 0.08s;
 }
 
-/*
- * .noteActive is toggled by the rAF loop via classList.add/remove —
- * NOT via React setState. This keeps 60fps smooth with 700+ notes.
- */
-.noteActive {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: var(--nc, #a78bfa) !important;
-  box-shadow: 0 0 16px var(--nc, #a78bfa), 0 0 5px var(--nc, #a78bfa);
-  transform: scaleY(1.1);
-  z-index: 10;
+.note:hover {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  z-index: 5;
 }
 
-.noteLabel {
+/* Single label (narrow note) */
+.noteSingle {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.88rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   pointer-events: none;
   user-select: none;
   line-height: 1;
 }
 
+/* Dual label (wide note — shows both fret and pitch) */
+.noteDualLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 2px 4px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.notePrimary {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1;
+}
+
+.noteSecondary {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1;
+}
+
+/* Active state — toggled by rAF classList, NOT React setState */
+.noteActive {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: var(--nc, #a78bfa) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.15),
+    0 0 16px var(--nc, #a78bfa),
+    0 0 6px var(--nc, #a78bfa);
+  transform: scaleY(1.08);
+  z-index: 10;
+}
+
+.noteActive .notePrimary   { color: #ffffff; }
+.noteActive .noteSingle    { color: #ffffff; }
+.noteActive .noteSecondary { color: rgba(255,255,255,0.75); }
+
 /* ── Playhead ────────────────────────────────────────────────────────────── */
 /*
- * left: 0 is the origin. rAF loop does:
- *   playheadRef.current.style.transform = `translateX(${t * PX_PER_SECOND}px)`
- * GPU-composited → zero layout reflow at 60fps.
+ * GPU-composited via transform: translateX().
+ * left:0 is origin. rAF sets transform directly — zero layout reflow at 60fps.
  */
 .playhead {
   position: absolute;
@@ -134,23 +226,24 @@
   width: 3px;
   background: linear-gradient(to bottom,
     #ffffff 0%,
-    #38bdf8 20%,
-    rgba(56, 189, 248, 0.4) 70%,
+    #38bdf8 15%,
+    rgba(56, 189, 248, 0.5) 60%,
     transparent 100%);
   box-shadow:
-    0 0 8px  rgba(255, 255, 255, 0.9),
-    0 0 20px rgba(56, 189, 248, 0.8),
-    0 0 40px rgba(56, 189, 248, 0.4);
+    0 0 8px  rgba(255, 255, 255, 0.95),
+    0 0 20px rgba(56, 189, 248, 0.85),
+    0 0 45px rgba(56, 189, 248, 0.45);
   pointer-events: none;
   z-index: 30;
   will-change: transform;
-  transform: translateX(0px); /* explicit initial value */
+  transform: translateX(0px);
 }
-/* Arrow head at top of playhead */
+
+/* Arrow head at top */
 .playhead::before {
   content: '';
   position: absolute;
-  top: -2px;
+  top: -3px;
   left: -5px;
   width: 0; height: 0;
   border-left:  6px solid transparent;
