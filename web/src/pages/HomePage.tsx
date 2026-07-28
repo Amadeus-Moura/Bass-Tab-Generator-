@@ -47,13 +47,13 @@ export function HomePage() {
         </div>
 
         <h1 className={styles.heroTitle}>
-          Baixe qualquer vídeo<br />
-          <span className={styles.heroGrad}>do YouTube, agora.</span>
+          Transforme qualquer vídeo e áudio<br />
+          <span className={styles.heroGrad}> em Tabs de Baixo</span>
         </h1>
 
         <p className={styles.heroSub}>
           Cole um link. Escolha MP3 ou MP4. Faça o download direto no seu dispositivo.
-          Bônus: transcrição de tablatura de baixo por IA.
+          E obtenha a transcrição de tablatura de baixo por IA.
         </p>
 
         {/* Waveform decorativo */}
