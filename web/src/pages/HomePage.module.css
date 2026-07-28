@@ -1,17 +1,17 @@
 /* ── Root ─────────────────────────────────────────────────────────────────── */
-.root { min-height: 100vh; position: relative; overflow-x: hidden; overflow-y: auto; }
+.root { min-height: 100vh; position: relative; overflow-x: hidden; }
 
 /* ── Background ───────────────────────────────────────────────────────────── */
 .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .orb1,.orb2,.orb3 { position: absolute; border-radius: 50%; filter: blur(110px); }
 .orb1 { width: 700px; height: 700px; background: rgba(167,139,250,0.11); top: -200px; left: -200px; animation: orbFloat 7s ease-in-out infinite; }
-.orb2 { width: 600px; height: 600px; background: rgba(56,189,248,0.09);  bottom: -150px; right: -150px; animation: orbFloat 7s ease-in-out infinite 2.5s; }
+.orb2 { width: 600px; height: 600px; background: rgba(56,189,248,0.09); bottom: -150px; right: -150px; animation: orbFloat 7s ease-in-out infinite 2.5s; }
 .orb3 { width: 350px; height: 350px; background: rgba(244,114,182,0.07); top: 55%; left: 50%; translate: -50% -50%; animation: orbFloat 9s ease-in-out infinite 5s; }
 @keyframes orbFloat { 0%,100%{transform:scale(1) translateY(0)} 50%{transform:scale(1.08) translateY(-20px)} }
 .dotGrid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 28px 28px; mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent 70%); }
 
 /* ── Nav ──────────────────────────────────────────────────────────────────── */
-.nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: rgba(13,13,20,0.75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: rgba(13,13,20,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.07); }
 .navLogo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 800; text-decoration: none; background: linear-gradient(135deg, #a78bfa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .navLinks { display: flex; align-items: center; gap: 1.25rem; }
 .navLink { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
@@ -26,21 +26,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  /* garante que o hero ocupa pelo menos a viewport sem cortar */
-  min-height: calc(100vh - 61px);
-  padding: 5rem 1.5rem 5rem;
-  gap: 1.5rem;
   justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 61px);
+  padding: 4rem 1.5rem;
+  gap: 1.5rem;
 }
 .badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 1rem; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); border-radius: 100px; font-size: 0.72rem; color: #c4b5fd; letter-spacing: 0.04em; }
 .badgeDot { width: 6px; height: 6px; border-radius: 50%; background: #a78bfa; box-shadow: 0 0 6px #a78bfa; animation: blink 2s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.heroTitle { font-size: clamp(2rem, 5vw, 3.75rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; margin: 0; max-width: 720px; }
+.heroTitle { font-size: clamp(2.2rem, 5vw, 3.75rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; margin: 0; max-width: 720px; }
 .heroGrad { background: linear-gradient(135deg, #a78bfa, #38bdf8 55%, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .heroSub { max-width: 560px; font-size: 1rem; color: var(--text-secondary); line-height: 1.7; margin: 0; }
 
-/* Waveform animation */
+/* Waveform */
 .waveform { display: flex; align-items: flex-end; gap: 3px; height: 52px; }
 .waveBar { width: 3px; border-radius: 2px; background: linear-gradient(to top, #a78bfa, #38bdf8); animation: waveAnim 1.2s ease-in-out infinite; animation-delay: calc(var(--i,0) * 0.04s); min-height: 3px; }
 .waveBar:nth-child(5n)   { animation-duration: 0.9s;  --bh: 42px; }
@@ -62,58 +61,88 @@
 .section {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  width: 100%;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 5rem 2rem;
 }
 .sectionTitle { font-size: 1.6rem; font-weight: 800; margin: 0 0 2.5rem; text-align: center; }
 
-/* Steps */
-.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+/* ── Steps (3 colunas fixas, cards mesma altura) ──────────────────────────── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  align-items: stretch;
+}
 .stepCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 0.75rem;
-  padding: 2.25rem 1.75rem;
+  padding: 2rem 1.5rem;
   background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 18px;
   transition: border-color 0.2s, background 0.2s;
-  /* altura flexível — nunca corta o texto */
-  height: auto;
-  min-height: 0;
 }
-.stepCard:hover { background: rgba(167,139,250,0.06); border-color: rgba(167,139,250,0.2); }
+.stepCard:hover { background: rgba(167,139,250,0.06); border-color: rgba(167,139,250,0.25); }
 .stepNum { font-size: 0.65rem; font-family: var(--font-mono); color: #a78bfa; letter-spacing: 0.12em; font-weight: 700; }
-.stepIcon { font-size: 2.25rem; }
-.stepTitle { margin: 0; font-size: 0.98rem; font-weight: 700; }
-.stepDesc { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
+.stepIcon { font-size: 2rem; }
+.stepTitle { margin: 0; font-size: 0.95rem; font-weight: 700; }
+.stepDesc { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
 
-/* Features grid */
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+/* ── Features (3 colunas fixas, cards mesma altura) ──────────────────────── */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
 .featureCard {
+  display: flex;
+  flex-direction: column;
   padding: 1.75rem;
   background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
-  transition: border-color 0.2s;
-  /* altura flexível */
-  height: auto;
-  min-height: 0;
+  transition: border-color 0.2s, background 0.2s;
 }
-.featureCard:hover { border-color: rgba(56,189,248,0.25); }
+.featureCard:hover { border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.04); }
 .featureIcon { font-size: 1.5rem; display: block; margin-bottom: 0.75rem; }
 .featureTitle { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
-.featureDesc { margin: 0; font-size: 0.79rem; color: var(--text-muted); line-height: 1.7; }
+.featureDesc { margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.65; }
 
-/* CTA section */
-.ctaSection { position: relative; z-index: 1; text-align: center; padding: 5rem 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; border-top: 1px solid rgba(255,255,255,0.06); }
+/* ── CTA section ──────────────────────────────────────────────────────────── */
+.ctaSection {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
 .ctaTitle { margin: 0; font-size: 1.8rem; font-weight: 800; }
 .ctaDesc { margin: 0; color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Footer */
+/* ── Footer ───────────────────────────────────────────────────────────────── */
 .footer { position: relative; z-index: 1; text-align: center; padding: 1.75rem; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: center; gap: 1.5rem; }
 .footerLink { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
 .footerLink:hover { color: #a78bfa; }
+
+/* ── Responsivo ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .steps   { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr; }
+  .nav { padding: 1rem 1.25rem; }
+  .navLinks { gap: 0.75rem; }
+  .section { padding: 3.5rem 1.25rem; }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .steps   { grid-template-columns: repeat(2, 1fr); }
+  .features { grid-template-columns: repeat(2, 1fr); }
+}
