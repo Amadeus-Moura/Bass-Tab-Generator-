@@ -20,19 +20,23 @@ function fmt(iso: string) {
 
 export function LibraryPage() {
   const navigate = useNavigate();
-  const [songs,      setSongs]      = useState<LibraryEntry[]>([]);
-  const [loading,    setLoading]    = useState(true);
-  const [loadingId,  setLoadingId]  = useState<string | null>(null);
-  const [editingId,  setEditingId]  = useState<string | null>(null);
-  const [editValue,  setEditValue]  = useState('');
+  const [songs,        setSongs]        = useState<LibraryEntry[]>([]);
+  const [loading,      setLoading]      = useState(true);
+  const [fetchError,   setFetchError]   = useState<string | null>(null);
+  const [loadingId,    setLoadingId]    = useState<string | null>(null);
+  const [editingId,    setEditingId]    = useState<string | null>(null);
+  const [editValue,    setEditValue]    = useState('');
+  const [confirmDelId, setConfirmDelId] = useState<string | null>(null);
+  const [deletingId,   setDeletingId]   = useState<string | null>(null);
   const editRef = useRef<HTMLInputElement>(null);
 
   const fetchLibrary = () => {
     setLoading(true);
+    setFetchError(null);
     fetch('/api/library')
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error(`Erro ${r.status}: ${r.statusText}`); return r.json(); })
       .then((d) => { setSongs(d); setLoading(false); })
-      .catch(() => setLoading(false));
+      .catch((e) => { setFetchError(String(e)); setLoading(false); });
   };
 
   useEffect(() => { fetchLibrary(); }, []);
@@ -42,14 +46,9 @@ export function LibraryPage() {
     if (editingId && editRef.current) editRef.current.focus();
   }, [editingId]);
 
-  const openPlayer = async (song: LibraryEntry) => {
-    if (!song.tabId || loadingId) return;
-    setLoadingId(song.songId);
-    try {
-      navigate(`/player/${song.songId}`);
-    } finally {
-      setLoadingId(null);
-    }
+  const openPlayer = (song: LibraryEntry) => {
+    if (!song.tabId || loadingId || confirmDelId) return;
+    navigate(`/player/${song.songId}`);
   };
 
   const startRename = (song: LibraryEntry, e: React.MouseEvent) => {
@@ -75,6 +74,17 @@ export function LibraryPage() {
   const handleKeyDown = (e: React.KeyboardEvent, songId: string) => {
     if (e.key === 'Enter')  commitRename(songId);
     if (e.key === 'Escape') setEditingId(null);
+  };
+
+  const deleteSong = async (songId: string) => {
+    setDeletingId(songId);
+    try {
+      await fetch(`/api/songs/${songId}`, { method: 'DELETE' });
+      setSongs((prev) => prev.filter((s) => s.songId !== songId));
+    } catch { /* silently fail */ } finally {
+      setDeletingId(null);
+      setConfirmDelId(null);
+    }
   };
 
   return (
@@ -109,6 +119,13 @@ export function LibraryPage() {
         {/* Content */}
         {loading ? (
           <div className={styles.center}><div className={styles.spinner} /></div>
+        ) : fetchError ? (
+          <div className={styles.empty}>
+            <span className={styles.emptyIcon}>⚠️</span>
+            <p className={styles.emptyTitle}>Não foi possível carregar a biblioteca</p>
+            <p className={styles.emptyDesc}>{fetchError}</p>
+            <button className={styles.emptyBtn} onClick={fetchLibrary}>↺ Tentar novamente</button>
+          </div>
         ) : songs.length === 0 ? (
           <div className={styles.empty}>
             <span className={styles.emptyIcon}>🎵</span>
@@ -170,11 +187,36 @@ export function LibraryPage() {
 
                 {/* Actions */}
                 <div className={styles.colActions} onClick={(e) => e.stopPropagation()}>
-                  <button
-                    className={styles.actionBtn}
-                    title="Renomear"
-                    onClick={(e) => startRename(song, e)}
-                  >✏️</button>
+                  {confirmDelId === song.songId ? (
+                    // Confirmação inline — evita window.confirm bloqueante
+                    <div className={styles.confirmRow}>
+                      <span className={styles.confirmLabel}>Apagar?</span>
+                      <button
+                        className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+                        title="Confirmar exclusão"
+                        disabled={deletingId === song.songId}
+                        onClick={() => deleteSong(song.songId)}
+                      >{deletingId === song.songId ? <span className={styles.miniSpinner} /> : '✓'}</button>
+                      <button
+                        className={styles.actionBtn}
+                        title="Cancelar"
+                        onClick={() => setConfirmDelId(null)}
+                      >✕</button>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        className={styles.actionBtn}
+                        title="Renomear"
+                        onClick={(e) => startRename(song, e)}
+                      >✏️</button>
+                      <button
+                        className={`${styles.actionBtn} ${styles.actionBtnDel}`}
+                        title="Apagar"
+                        onClick={() => setConfirmDelId(song.songId)}
+                      >🗑️</button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}

@@ -3,37 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bass Tab — Gerador de Tablatura</title>
-    <meta name="description" content="Visualizador interativo de tablatura para baixo elétrico gerada por ML a partir de áudio." />
+    <title>MediaFlow — Download YouTube MP3 e MP4</title>
+    <meta name="description" content="Baixe áudio e vídeo do YouTube em segundos. MP3 até 320 kbps, MP4 até 4K. Bônus: transcrição de tablatura de baixo por IA." />
     <meta name="theme-color" content="#0d0d14" />
 
-    <!-- Preconnect para Google Fonts (reduz latência DNS+TCP) -->
+    <!-- Preconnect para Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!--
-      Fontes carregadas de forma NÃO-BLOQUEANTE (media="print" + onload trick).
-      A página renderiza imediatamente com as fontes de sistema (Inter/Segoe UI),
-      e quando as fontes Web chegarem, a UI atualiza sem re-layout visível.
-    -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap"
       />
     </noscript>
 
-    <!-- Favicon emoji -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎸</text></svg>" />
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬇</text></svg>" />
+
+    <!-- ── Loading screen CSS (inline para carregar instantaneamente) ── -->
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background: #0d0d14;
+        font-family: 'Inter', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 1.5rem;
+        background: #0d0d14;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+      }
+      #splash.hidden { opacity: 0; visibility: hidden; }
+
+      /* orb de fundo */
+      #splash::before {
+        content: '';
+        position: absolute;
+        width: 600px; height: 600px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%);
+        filter: blur(100px);
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        animation: splashBreath 3s ease-in-out infinite;
+      }
+      @keyframes splashBreath {
+        0%,100% { transform: translate(-50%, -50%) scale(1);   opacity: 0.7; }
+        50%      { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+      }
+
+      .splash-logo {
+        position: relative; z-index: 1;
+        display: flex; align-items: center; gap: 0.55rem;
+        font-size: 1.6rem; font-weight: 900; letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .splash-logo-icon { font-size: 1.8rem; }
+
+      .splash-dots {
+        position: relative; z-index: 1;
+        display: flex; gap: 0.45rem; align-items: center;
+      }
+      .splash-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: rgba(167,139,250,0.6);
+        animation: dotBounce 1.1s ease-in-out infinite;
+      }
+      .splash-dot:nth-child(2) { animation-delay: 0.18s; }
+      .splash-dot:nth-child(3) { animation-delay: 0.36s; }
+      @keyframes dotBounce {
+        0%,80%,100% { transform: scale(1);   opacity: 0.5; }
+        40%          { transform: scale(1.4); opacity: 1; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Splash screen — removido pelo React ao montar -->
+    <div id="splash">
+      <div class="splash-logo">
+        <span class="splash-logo-icon">⬇</span>
+        <span>MediaFlow</span>
+      </div>
+      <div class="splash-dots">
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+      </div>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

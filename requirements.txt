@@ -24,3 +24,6 @@ demucs>=4.0.0
 # Audio-to-MIDI transcription — Spotify's Basic Pitch
 # Uses TensorFlow under the hood (installed automatically as a dependency)
 basic-pitch>=0.3.0
+
+# YouTube / media downloader (used by the Node.js server pipeline)
+yt-dlp>=2026.7.4

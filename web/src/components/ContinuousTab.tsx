@@ -3,10 +3,10 @@ import type { TabJson, JsonNoteEvent } from '../types/TabJson';
 import styles from './ContinuousTab.module.css';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
-const RULER_H       = 28;   // time ruler height (px)
+const RULER_H = 28;   // time ruler height (px)
 const STRING_HEIGHT = 80;   // height per string row (px)
-const NOTE_HEIGHT   = 46;   // note block height
-const NOTE_MIN_W    = 34;   // minimum note width
+const NOTE_HEIGHT = 46;   // note block height
+const NOTE_MIN_W = 34;   // minimum note width
 const SCROLL_OFFSET = 0.30; // playhead sits at 30% of container width
 
 // ── Per-string palette — max contrast between 4 strings ───────────────────
@@ -25,11 +25,11 @@ const STRING_DIM = [
 const TUNING = ['E', 'A', 'D', 'G'];
 
 interface Props {
-  tabJson:      TabJson;
-  audioRef:     React.RefObject<HTMLAudioElement | null>;
-  displayMode:  'frets' | 'notes';
-  zoom:         number;   // px per second — controlled by parent
-  onSeek:       (t: number) => void;
+  tabJson: TabJson;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
+  displayMode: 'frets' | 'notes';
+  zoom: number;   // px per second — controlled by parent
+  onSeek: (t: number) => void;
 }
 
 export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: Props) {
@@ -37,17 +37,28 @@ export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: 
 
   // ── DOM refs (no setState in hot-path) ────────────────────────────────────
   const containerRef = useRef<HTMLDivElement>(null);
-  const playheadRef  = useRef<HTMLDivElement>(null);
-  const noteRefs     = useRef<(HTMLDivElement | null)[]>([]);
-  const activeSet    = useRef<Set<number>>(new Set());
-  const rafId        = useRef<number>(0);
+  const playheadRef = useRef<HTMLDivElement>(null);
+  const noteRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const activeSet = useRef<Set<number>>(new Set());
+  const rafId = useRef<number>(0);
+
+  // ── Coleta de Lixo no Unmount ──────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      noteRefs.current = [];
+      activeSet.current.clear();
+    };
+  }, []);
 
   // ── Flatten all note events once ──────────────────────────────────────────
   const allNotes: JsonNoteEvent[] = useMemo(
-    () =>
-      tabJson.measures.flatMap((m) =>
-        m.events.filter((e): e is JsonNoteEvent => e.type === 'note'),
-      ),
+    () => {
+      // Força a limpeza das refs ao trocar de tablatura (evita vazamento de nós velhos)
+      noteRefs.current = [];
+      return tabJson.measures
+        .flatMap((m) => m.events.filter((e): e is JsonNoteEvent => e.type === 'note'))
+        .sort((a, b) => a.startTime - b.startTime);
+    },
     [tabJson],
   );
 
@@ -58,12 +69,12 @@ export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: 
     return Math.max(max, 1);
   }, [allNotes]);
 
-  const totalWidth   = totalDuration * PX_PER_SECOND;
-  const stringsH     = tabJson.meta.stringCount * STRING_HEIGHT;
-  const canvasH      = RULER_H + stringsH; // ruler on top, strings below
+  const totalWidth = totalDuration * PX_PER_SECOND;
+  const stringsH = tabJson.meta.stringCount * STRING_HEIGHT;
+  const canvasH = RULER_H + stringsH; // ruler on top, strings below
 
   // ── String y positions (offset by ruler) ─────────────────────────────────
-  const stringY     = (s: number) =>
+  const stringY = (s: number) =>
     RULER_H + (tabJson.meta.stringCount - s) * STRING_HEIGHT + (STRING_HEIGHT - NOTE_HEIGHT) / 2;
   const stringLineY = (s: number) =>
     RULER_H + (tabJson.meta.stringCount - s) * STRING_HEIGHT + STRING_HEIGHT / 2;
@@ -115,7 +126,7 @@ export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: 
     const container = containerRef.current;
     if (!container) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x    = e.clientX - rect.left + container.scrollLeft;
+    const x = e.clientX - rect.left + container.scrollLeft;
     // Only seek if click is below the ruler
     if (e.clientY - rect.top < RULER_H) return;
     onSeek(x / PX_PER_SECOND);
@@ -184,7 +195,7 @@ export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: 
               key={`line-${s}`}
               className={styles.stringLine}
               style={{
-                top:         stringLineY(s),
+                top: stringLineY(s),
                 borderColor: STRING_COLORS[s - 1] + '30',
               }}
             />
@@ -203,10 +214,10 @@ export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: 
 
           {/* ── Note blocks ─────────────────────────────────────────── */}
           {allNotes.map((note, idx) => {
-            const w      = Math.max(note.duration * PX_PER_SECOND, NOTE_MIN_W);
-            const color  = STRING_COLORS[note.string - 1];
-            const dim    = STRING_DIM[note.string - 1];
-            const wide   = w >= 52; // enough room for dual label
+            const w = Math.max(note.duration * PX_PER_SECOND, NOTE_MIN_W);
+            const color = STRING_COLORS[note.string - 1];
+            const dim = STRING_DIM[note.string - 1];
+            const wide = w >= 52; // enough room for dual label
 
             return (
               <div
@@ -214,13 +225,13 @@ export function ContinuousTab({ tabJson, audioRef, displayMode, zoom, onSeek }: 
                 ref={(el) => { noteRefs.current[idx] = el; }}
                 className={styles.note}
                 style={{
-                  left:        note.startTime * PX_PER_SECOND,
-                  top:         stringY(note.string),
-                  width:       w,
-                  height:      NOTE_HEIGHT,
-                  background:  dim,
+                  left: note.startTime * PX_PER_SECOND,
+                  top: stringY(note.string),
+                  width: w,
+                  height: NOTE_HEIGHT,
+                  background: dim,
                   borderColor: color + '60',
-                  '--nc':      color,
+                  '--nc': color,
                 } as React.CSSProperties}
                 title={`${note.pitch}${note.octave} · traste ${note.fret} · corda ${note.string}`}
               >

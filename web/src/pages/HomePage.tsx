@@ -2,18 +2,18 @@ import { Link } from 'react-router-dom';
 import styles from './HomePage.module.css';
 
 const STEPS = [
-  { n: '01', icon: '⬆', title: 'Faça o Upload', desc: 'Envie qualquer arquivo de áudio — .mp3, .wav, .flac, .ogg ou .m4a.' },
-  { n: '02', icon: '🤖', title: 'IA Processa',   desc: 'Demucs separa o baixo. Basic Pitch transcreve para MIDI. Tudo automático.' },
-  { n: '03', icon: '🎸', title: 'Toque e Edite', desc: 'Player 60fps sincronizado. Alterne entre trastes e notas. Exporte para PDF.' },
+  { n: '01', icon: '🔗', title: 'Cole o link',       desc: 'Cole uma URL do YouTube ou arraste um arquivo de áudio.' },
+  { n: '02', icon: '⚙️', title: 'Escolha o formato',  desc: 'MP3 ou MP4, qualidade que quiser — 128 kbps até 4K.' },
+  { n: '03', icon: '⬇', title: 'Baixe na hora',      desc: 'Download direto para o seu dispositivo. Sem cadastro.' },
 ];
 
 const FEATURES = [
-  { icon: '🎛️', title: 'Separação de Fonte', desc: 'Demucs (Meta AI) isola o baixo com precisão mesmo em mixagens complexas.' },
-  { icon: '🎵', title: 'Transcrição MIDI',   desc: 'Basic Pitch (Spotify) converte o áudio do baixo em notas com timing preciso.' },
-  { icon: '⚡', title: 'Player 60fps',       desc: 'Playhead e scroll via requestAnimationFrame. Zero re-renders com 700+ notas.' },
-  { icon: '🗄️', title: 'Biblioteca Pessoal', desc: 'Tablaturas salvas em PostgreSQL. Carregamento instantâneo sem re-processar.' },
-  { icon: '🔀', title: 'Trastes ou Notas',   desc: 'Alterne em tempo real entre exibição de fret numbers e pitch (ex: F#3).' },
-  { icon: '📄', title: 'Exportar PDF',       desc: 'Gere um PDF completo da tablatura para imprimir ou arquivar.' },
+  { icon: '⬇',  title: 'Download Rápido',      desc: 'yt-dlp integrado — baixe MP3 ou MP4 do YouTube em segundos.' },
+  { icon: '📋', title: 'Playlists completas',   desc: 'Cole a URL de uma playlist inteira e receba tudo em um ZIP.' },
+  { icon: '🎵', title: 'Áudio sem perdas',      desc: 'Escolha entre 128, 192 ou 320 kbps. Qualidade que você define.' },
+  { icon: '🎬', title: 'Vídeo em alta res.',    desc: 'HD 720p, Full HD 1080p ou a melhor qualidade disponível (4K).' },
+  { icon: '🎸', title: 'Tablatura de Baixo',   desc: 'IA isola o baixo e transcreve em tablatura interativa com timing.' },
+  { icon: '⚡', title: 'Player 60fps',          desc: 'Playhead sincronizado com o áudio. Zero lag, zero re-renders.' },
 ];
 
 export function HomePage() {
@@ -27,29 +27,36 @@ export function HomePage() {
 
       {/* Nav */}
       <nav className={styles.nav}>
-        <Link to="/" className={styles.navLogo}>🎸 <span>Bass Tab</span></Link>
+        <Link to="/" className={styles.navLogo}>
+          <span>⬇</span>
+          <span>MediaFlow</span>
+        </Link>
         <div className={styles.navLinks}>
-          <Link to="/library" className={styles.navLink}>Biblioteca</Link>
-          <Link to="/upload"  className={styles.navLink}>Upload</Link>
-          <Link to="/library" className={styles.navBtnLogin}>Entrar</Link>
+          <Link to="/library"  className={styles.navLink}>Biblioteca</Link>
+          <Link to="/upload"   className={styles.navLink}>Download</Link>
+          <Link to="/playlist" className={styles.navLink}>Playlist</Link>
+          <Link to="/upload"   className={styles.navBtnLogin}>Começar</Link>
         </div>
       </nav>
 
       {/* Hero */}
       <section className={styles.hero}>
-        <div className={styles.badge}><span className={styles.badgeDot} /> Powered by Demucs &amp; Basic Pitch</div>
+        <div className={styles.badge}>
+          <span className={styles.badgeDot} />
+          yt-dlp · MP3 · MP4 · Tablatura IA
+        </div>
 
         <h1 className={styles.heroTitle}>
-          Transforme Qualquer Áudio<br />
-          <span className={styles.heroGrad}>em Tablatura de Baixo</span>
+          Baixe qualquer vídeo<br />
+          <span className={styles.heroGrad}>do YouTube, agora.</span>
         </h1>
 
         <p className={styles.heroSub}>
-          Inteligência artificial separa o baixo, transcreve para MIDI e entrega
-          uma tablatura interativa com player sincronizado em tempo real.
+          Cole um link. Escolha MP3 ou MP4. Faça o download direto no seu dispositivo.
+          Bônus: transcrição de tablatura de baixo por IA.
         </p>
 
-        {/* Waveform */}
+        {/* Waveform decorativo */}
         <div className={styles.waveform} aria-hidden>
           {Array.from({ length: 40 }).map((_, i) => (
             <div key={i} className={styles.waveBar} style={{ '--i': i } as React.CSSProperties} />
@@ -57,8 +64,9 @@ export function HomePage() {
         </div>
 
         <div className={styles.heroBtns}>
-          <Link to="/upload"  className={styles.ctaPrimary}>⬆ Começar agora</Link>
-          <Link to="/library" className={styles.ctaSecondary}>Ver Biblioteca</Link>
+          <Link to="/upload"   className={styles.ctaPrimary}>⬇ Baixar agora</Link>
+          <Link to="/playlist" className={styles.ctaPlaylist}>📋 Baixar playlist</Link>
+          <Link to="/library"  className={styles.ctaSecondary}>Ver Biblioteca</Link>
         </div>
       </section>
 
@@ -93,13 +101,16 @@ export function HomePage() {
 
       {/* CTA bottom */}
       <section className={styles.ctaSection}>
-        <h2 className={styles.ctaTitle}>Pronto para transcrever?</h2>
-        <p className={styles.ctaDesc}>Envie uma música e tenha a tablatura de baixo em minutos.</p>
-        <Link to="/upload" className={styles.ctaPrimary}>⬆ Fazer Upload</Link>
+        <h2 className={styles.ctaTitle}>Pronto para começar?</h2>
+        <p className={styles.ctaDesc}>Cole um link do YouTube e baixe em segundos. Grátis, sem cadastro.</p>
+        <div className={styles.heroBtns}>
+          <Link to="/upload"   className={styles.ctaPrimary}>⬇ Baixar vídeo</Link>
+          <Link to="/playlist" className={styles.ctaPlaylist}>📋 Baixar playlist</Link>
+        </div>
       </section>
 
       <footer className={styles.footer}>
-        <p>🎸 Bass Tab Generator · {new Date().getFullYear()}</p>
+        <p>⬇ MediaFlow · {new Date().getFullYear()}</p>
         <a href="https://github.com/Amadeus-Moura/Bass-Tab-Generator-" target="_blank" rel="noreferrer" className={styles.footerLink}>GitHub →</a>
       </footer>
     </div>

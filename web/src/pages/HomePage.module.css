@@ -41,6 +41,8 @@
 .heroBtns { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
 .ctaPrimary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2.25rem; background: linear-gradient(135deg, #a78bfa, #38bdf8); color: #fff; font-size: 0.95rem; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 0 30px rgba(167,139,250,0.4); transition: transform 0.2s, box-shadow 0.2s; }
 .ctaPrimary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(167,139,250,0.6); }
+.ctaPlaylist { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; background: linear-gradient(135deg, #d97706, #fbbf24); color: #1a0a00; font-size: 0.95rem; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 0 22px rgba(217,119,6,0.35); transition: transform 0.2s, box-shadow 0.2s; }
+.ctaPlaylist:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(217,119,6,0.55); }
 .ctaSecondary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--text-secondary); font-size: 0.95rem; font-weight: 600; border-radius: 12px; text-decoration: none; transition: background 0.2s, border-color 0.2s, color 0.2s; }
 .ctaSecondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(167,139,250,0.35); color: var(--text-primary); }
 

@@ -39,7 +39,7 @@
 /* List table */
 .list { display: flex; flex-direction: column; gap: 0.4rem; }
 
-.row { display: grid; grid-template-columns: 52px 1fr auto auto 52px; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 12px; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.12s; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); }
+.row { display: grid; grid-template-columns: 52px 1fr auto auto 90px; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 12px; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.12s; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); }
 .row:not(.rowHeader):hover { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.22); transform: translateX(4px); }
 .rowLoading { opacity: 0.6; pointer-events: none; }
 .rowHeader { background: transparent !important; border-color: transparent !important; cursor: default; transform: none !important; padding-bottom: 0.25rem; }
@@ -49,7 +49,7 @@
 .colTitle   { min-width: 0; }
 .colMeta    { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .colDate    { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; font-family: var(--font-mono); }
-.colActions { display: flex; justify-content: flex-end; }
+.colActions { display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; }
 
 /* Header labels */
 .rowHeader .colTitle,
@@ -71,5 +71,15 @@
 .metaTag { padding: 0.15rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; font-size: 0.65rem; font-family: var(--font-mono); color: var(--text-muted); white-space: nowrap; }
 
 /* Action buttons */
-.actionBtn { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
+.actionBtn { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s, border-color 0.15s; color: var(--text-primary); }
 .actionBtn:hover { background: rgba(255,255,255,0.12); }
+.actionBtnDel:hover { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.35); }
+.actionBtnDanger { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.45); color: #f87171; }
+.actionBtnDanger:hover { background: rgba(239,68,68,0.28); }
+
+/* Confirm row (delete) */
+.confirmRow { display: flex; align-items: center; gap: 0.35rem; }
+.confirmLabel { font-size: 0.68rem; color: #f87171; white-space: nowrap; font-weight: 700; }
+
+/* emptyBtn como button nativo */
+button.emptyBtn { border: none; cursor: pointer; }

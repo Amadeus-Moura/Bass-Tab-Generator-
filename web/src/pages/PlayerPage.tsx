@@ -3,24 +3,26 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { TabJson } from '../types/TabJson';
 import { ContinuousTab } from '../components/ContinuousTab';
 import { AudioControls } from '../components/AudioControls';
-import { ModeToggle }    from '../components/ModeToggle';
+import { ModeToggle } from '../components/ModeToggle';
+import { exportTabToPdf } from '../utils/exportTabToPdf';
 import styles from './PlayerPage.module.css';
 
 const ZOOM_DEFAULT = 180;
-const ZOOM_MIN     = 80;
-const ZOOM_MAX     = 500;
+const ZOOM_MIN = 80;
+const ZOOM_MAX = 500;
 
 export function PlayerPage() {
   const { songId } = useParams<{ songId: string }>();
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
 
-  const [tabJson,  setTabJson]  = useState<TabJson | null>(null);
+  const [tabJson, setTabJson] = useState<TabJson | null>(null);
   const [audioUrl, setAudioUrl] = useState('');
-  const [title,    setTitle]    = useState('');
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState<string | null>(null);
-  const [mode,     setMode]     = useState<'frets' | 'notes'>('frets');
-  const [zoom,     setZoom]     = useState(ZOOM_DEFAULT);
+  const [title, setTitle] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'frets' | 'notes'>('frets');
+  const [zoom, setZoom] = useState(ZOOM_DEFAULT);
+  const [exporting, setExporting] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -40,6 +42,18 @@ export function PlayerPage() {
   const seek = useCallback((t: number) => {
     if (audioRef.current) audioRef.current.currentTime = t;
   }, []);
+
+  const handleExport = useCallback(async () => {
+    if (!tabJson || exporting) return;
+    setExporting(true);
+    try {
+      await exportTabToPdf(tabJson, title, zoom);
+    } catch (e) {
+      alert(`Erro ao gerar PDF: ${e}`);
+    } finally {
+      setExporting(false);
+    }
+  }, [tabJson, title, zoom, exporting]);
 
   if (loading) {
     return (
@@ -65,10 +79,9 @@ export function PlayerPage() {
     <div className={styles.root}>
       <audio ref={audioRef} src={audioUrl} preload="auto" crossOrigin="anonymous" />
 
-      {/* ── Top bar ──────────────────────────────────────────────────── */}
       <header className={styles.topBar}>
         <div className={styles.topLeft}>
-          <Link to="/library" className={styles.backLink} title="Voltar para Biblioteca">←</Link>
+          <Link to="/library" className={styles.backLink} title="Voltar">←</Link>
           <div className={styles.titleBlock}>
             <h1 className={styles.songTitle}>{title}</h1>
             <p className={styles.songMeta}>
@@ -82,32 +95,35 @@ export function PlayerPage() {
         </div>
 
         <div className={styles.topRight}>
-          {/* Zoom control */}
+          {/* Zoom */}
           <div className={styles.zoomControl}>
             <span className={styles.zoomIcon}>🔍</span>
             <input
-              id="zoom-slider"
-              type="range"
-              min={ZOOM_MIN}
-              max={ZOOM_MAX}
-              step={20}
-              value={zoom}
-              className={styles.zoomSlider}
+              type="range" min={ZOOM_MIN} max={ZOOM_MAX} step={20}
+              value={zoom} className={styles.zoomSlider}
               onChange={(e) => setZoom(Number(e.target.value))}
               title={`Zoom: ${zoom}px/s`}
             />
             <span className={styles.zoomLabel}>{zoom}<small>px/s</small></span>
           </div>
 
+          {/* PDF Export */}
+          <button
+            className={`${styles.exportBtn} ${exporting ? styles.exportBtnBusy : ''}`}
+            onClick={handleExport}
+            disabled={exporting}
+            title="Exportar tablatura para PDF"
+          >
+            {exporting ? <span className={styles.exportSpinner} /> : '⬇'} PDF
+          </button>
+
           <Link to="/library" className={styles.navLink}>Biblioteca</Link>
-          <Link to="/upload"  className={styles.navCta}>⬆ Upload</Link>
+          <Link to="/upload" className={styles.navCta}>⬆ Upload</Link>
         </div>
       </header>
 
-      {/* ── Audio controls ────────────────────────────────────────────── */}
       <AudioControls audioRef={audioRef} title={title} />
 
-      {/* ── Tablature ─────────────────────────────────────────────────── */}
       <div className={styles.tabArea}>
         <ContinuousTab
           tabJson={tabJson}
