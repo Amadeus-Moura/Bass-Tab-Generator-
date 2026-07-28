@@ -88,7 +88,7 @@ export function AudioControls({ audioRef, title }: Props) {
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (audio.paused) audio.play().catch(console.error);
+    if (audio.paused) audio.play().catch(() => {});
     else              audio.pause();
   };
 

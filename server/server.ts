@@ -761,6 +761,7 @@ function runPython(
     });
 
     let lastProgress = 8;
+    let stderrBuf = '';
     void onProgress({ stage: 'separating', message: 'Separando frequências com Demucs…', progress: 8 });
 
     const parse = (raw: string) => {
@@ -789,8 +790,13 @@ function runPython(
     };
 
     proc.stdout.on('data', (d: Buffer) => parse(d.toString()));
-    proc.stderr.on('data',  (d: Buffer) => parse(d.toString()));
-    proc.on('close', (code) => code === 0 ? resolve() : reject(new Error(`bass_extractor.py saiu com código ${code}`)));
+    proc.stderr.on('data',  (d: Buffer) => { const s = d.toString(); stderrBuf += s; parse(s); });
+    proc.on('close', (code) => {
+      if (code === 0) { resolve(); return; }
+      const lastErr = stderrBuf.split('\n').filter(Boolean).slice(-6).join(' | ');
+      console.error('[runPython] stderr:', stderrBuf);
+      reject(new Error(`bass_extractor.py falhou (código ${code}): ${lastErr || 'sem saída de erro'}`))
+    });
     proc.on('error', reject);
   });
 }
@@ -814,12 +820,12 @@ function runPythonWithUrl(
 
     let lastProgress = 5;
     let resolvedPath: string | null = null;
+    let stderrBuf = '';
 
     const parse = (raw: string) => {
       for (const line of raw.split('\n')) {
         const trimmed = line.trim();
 
-        // Captura o caminho do arquivo publicado pelo Python via stdout
         if (trimmed.startsWith('MEDIA_PATH:')) {
           resolvedPath = trimmed.replace('MEDIA_PATH:', '').trim();
           const doneProgress = maxDlProgress >= 90 ? 95 : 30;
@@ -828,11 +834,9 @@ function runPythonWithUrl(
           continue;
         }
 
-        // Progresso do yt-dlp — captura "[download]  XX.X%"
         const dlMatch = trimmed.match(/\[download\]\s+(\d+(?:\.\d+)?)%/);
         if (dlMatch && lastProgress < maxDlProgress) {
           const dlPct = parseFloat(dlMatch[1]);
-          // Mapeia 0-100% do yt-dlp para a faixa 5-maxDlProgress da barra total
           const mapped = Math.round(5 + (dlPct / 100) * (maxDlProgress - 5));
           if (mapped > lastProgress) {
             lastProgress = mapped;
@@ -840,7 +844,6 @@ function runPythonWithUrl(
           }
         }
 
-        // Fase de conversão FFmpeg — sinalizado pelo postprocessor_hook do Python
         if (trimmed.startsWith('[converting]') && !trimmed.includes('done') && lastProgress < 92) {
           lastProgress = 92;
           void onProgress({ stage: 'converting', message: 'Convertendo para MP3…', progress: 92 });
@@ -850,7 +853,6 @@ function runPythonWithUrl(
           void onProgress({ stage: 'converting', message: 'Conversão concluída!', progress: 95 });
         }
 
-        // Progresso do Demucs (se gerando tablatura)
         if (trimmed.includes('Running Demucs') && lastProgress < 45) {
           lastProgress = 45;
           void onProgress({ stage: 'demucs', message: 'Demucs processando…', progress: 45 });
@@ -871,12 +873,13 @@ function runPythonWithUrl(
       }
     };
 
-
     proc.stdout.on('data', (d: Buffer) => parse(d.toString()));
-    proc.stderr.on('data',  (d: Buffer) => parse(d.toString()));
+    proc.stderr.on('data',  (d: Buffer) => { const s = d.toString(); stderrBuf += s; parse(s); });
     proc.on('close', (code) => {
-      if (code === 0) resolve(resolvedPath);
-      else reject(new Error(`bass_extractor.py saiu com código ${code}`));
+      if (code === 0) { resolve(resolvedPath); return; }
+      const lastErr = stderrBuf.split('\n').filter(Boolean).slice(-6).join(' | ');
+      console.error('[runPythonWithUrl] stderr:', stderrBuf);
+      reject(new Error(`bass_extractor.py falhou (código ${code}): ${lastErr || 'sem saída de erro'}`));
     });
     proc.on('error', reject);
   });

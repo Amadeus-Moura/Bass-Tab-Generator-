@@ -9,9 +9,16 @@ export default defineConfig({
     port: 5173,
     open: true,
     proxy: {
-      // Forward /api and /audio requests to the Express server
-      '/api': { target: 'http://localhost:3001', changeOrigin: true },
+      '/api':   { target: 'http://localhost:3001', changeOrigin: true },
       '/audio': { target: 'http://localhost:3001', changeOrigin: true },
     },
   },
+  build: {
+    minify: 'esbuild',
+  },
+  esbuild: {
+    // Remove console.* e debugger do bundle de produção
+    drop: ['console', 'debugger'],
+  },
 });
+

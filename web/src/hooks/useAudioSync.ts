@@ -46,7 +46,7 @@ export function useAudioSync(
     };
   }, [audioRef]);
 
-  const play  = () => audioRef.current?.play().catch(console.error);
+  const play  = () => audioRef.current?.play().catch(() => {});
   const pause = () => audioRef.current?.pause();
   const seek  = (t: number) => { if (audioRef.current) audioRef.current.currentTime = t; };
 
